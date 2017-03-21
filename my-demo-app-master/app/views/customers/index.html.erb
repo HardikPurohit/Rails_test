@@ -1,0 +1,23 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Bookings</h1>
+<table>
+  <thead>
+    <tr>
+      <th>Cleaner</th>
+      <th>Date</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @customers_booking.each do |booking| %>
+      <tr>
+        <td><%= booking.cleaner.first_name %></td>
+        <td><%= booking.date %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<br>
+
+<%= link_to 'New Booking', new_booking_path %>
