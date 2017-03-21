@@ -20,10 +20,27 @@
     <%= f.text_field :last_name %>
   </div>
   <div class="field">
+    <%= f.label :email %><br>
+    <%= f.text_field :email %>
+  </div>
+  <div class="field">
     <%= f.label :quality_score %><br>
     <%= f.text_field :quality_score %>
   </div>
-
+  <div class="field">
+    <% @cities.each do |city| %>
+      <%if @selected_cities != nil %>
+        <%if @selected_cities.pluck(:city_id).include?(city.id)%>
+          <%= check_box_tag 'city_ids[]', city.id, checked:true %>
+        <%else%>
+          <%= check_box_tag 'city_ids[]', city.id%>
+        <%end%>
+      <%else%>
+        <%= check_box_tag 'city_ids[]', city.id %>
+      <% end %>
+        <%= city.city_name %>
+    <%end%>
+  </div>
   <div class="actions">
     <%= f.submit %>
   </div>
