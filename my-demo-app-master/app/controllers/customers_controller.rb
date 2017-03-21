@@ -4,7 +4,7 @@ class CustomersController < ApplicationController
   # GET /customers
   # GET /customers.json
   def index
-    @customers_booking = Customer.find(session[:customer_id]).bookings
+    @customers = Customer.all
   end
 
   # GET /customers/1
@@ -66,6 +66,7 @@ class CustomersController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_customer
       @customer = Customer.find(params[:id])
+      @customer_booking = Booking.where(customer_id: params[:id]).includes(:cleaner,:city)
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

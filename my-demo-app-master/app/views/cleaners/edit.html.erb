@@ -1,6 +1,7 @@
-<h1>Editing Cleaner</h1>
+<%=link_to "Home" ,admins_path%>
+<div class="panel panel-default">
+   <div class="panel-heading">Editing Cleaner</div>
+    <%= render 'form'%>
 
- <%= render 'form'%>
- 
 <%= link_to 'Show', @cleaner %> |
 <%= link_to 'Back', cleaners_path %>

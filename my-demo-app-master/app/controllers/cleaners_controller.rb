@@ -10,7 +10,7 @@ class CleanersController < ApplicationController
   # GET /cleaners/1
   # GET /cleaners/1.json
   def show
-    @cleaner_city = City.find(@selected_cities.pluck(:city_id))
+    @cleaner_booking = Booking.where(cleaner_id: params[:id]).includes(:customer,:city)
   end
 
   # GET /cleaners/new
@@ -28,30 +28,42 @@ class CleanersController < ApplicationController
   # POST /cleaners.json
   def create
     @cleaner = Cleaner.new(cleaner_params)
-    if @cleaner.save
-      @selected_cities = params[:city_ids]
-      @selected_cities.each do |city|
-        @cities_cleaner = CitiesCleaner.create(city_id: city,cleaner_id: Cleaner.last.id)
-      end
-      redirect_to action: 'index'
+    if params[:city_ids].nil?
+      flash[:notice] = "please select atleast one checkbox"
+      redirect_to action: 'new'
     else
-      render 'new'
+      if @cleaner.save
+        @selected_cities = params[:city_ids]
+        @selected_cities.each do |city|
+          @cities_cleaner = CitiesCleaner.create(city_id: city,cleaner_id: Cleaner.last.id)
+        end
+        redirect_to action: 'index'
+      else
+        @cities = City.all
+        render :new
+      end
     end
   end
 
   # PATCH/PUT /cleaners/1
   # PATCH/PUT /cleaners/1.json
   def update
-     if @cleaner.update(cleaner_params)
-       CitiesCleaner.where(cleaner_id: @cleaner.id).destroy_all
-       @selected_cities = params[:city_ids]
-       @selected_cities.each do |city|
-         CitiesCleaner.create(city_id: city,cleaner_id: @cleaner.id)
-       end
-       redirect_to action: 'index'
-     else
-       render 'edit'
-     end
+    if params[:city_ids].nil?
+      flash[:notice] = "please select atleast one checkbox"
+      redirect_to action: 'edit'
+    else
+      if @cleaner.update(cleaner_params)
+        CitiesCleaner.where(cleaner_id: @cleaner.id).destroy_all
+        @selected_cities = params[:city_ids]
+        @selected_cities.each do |city|
+          CitiesCleaner.create(city_id: city,cleaner_id: @cleaner.id)
+        end
+        redirect_to action: 'index'
+      else
+       @cities = City.all
+       render :edit
+      end
+    end
   end
 
   # DELETE /cleaners/1

@@ -1,8 +1,8 @@
+<div class="panel-body">
 <%= form_for(@cleaner) do |f| %>
   <% if @cleaner.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@cleaner.errors.count, "error") %> prohibited this cleaner from being saved:</h2>
-
       <ul>
       <% @cleaner.errors.full_messages.each do |message| %>
         <li><%= message %></li>
@@ -10,7 +10,7 @@
       </ul>
     </div>
   <% end %>
-
+<%=flash[:notice]%>
   <div class="field">
     <%= f.label :first_name %><br>
     <%= f.text_field :first_name %>
@@ -33,15 +33,17 @@
         <%if @selected_cities.pluck(:city_id).include?(city.id)%>
           <%= check_box_tag 'city_ids[]', city.id, checked:true %>
         <%else%>
-          <%= check_box_tag 'city_ids[]', city.id%>
+            <%= check_box_tag 'city_ids[]', city.id%>
         <%end%>
       <%else%>
         <%= check_box_tag 'city_ids[]', city.id %>
       <% end %>
-        <%= city.city_name %>
+      <%= city.city_name %>
     <%end%>
   </div>
   <div class="actions">
     <%= f.submit %>
   </div>
 <% end %>
+</div>
+</div>
