@@ -1,10 +1,14 @@
 class CustomersController < ApplicationController
-  before_action :set_customer, only: [:show, :edit, :update, :destroy]
+  before_action :set_customer, only: [:show, :edit, :update]
 
   # GET /customers
   # GET /customers.json
   def index
-    @customers = Customer.all
+    if current_admin.nil?
+      @bookings = Booking.where(customer_id: session[:customer_id])
+    else
+      @customers = Customer.all
+    end
   end
 
   # GET /customers/1
@@ -14,7 +18,11 @@ class CustomersController < ApplicationController
 
   # GET /customers/new
   def new
-    @customer = Customer.new
+    if current_admin.nil?
+      @customer = Customer.new
+    else
+      redirect_to admins_path
+    end
   end
 
   # GET /customers/1/edit
@@ -24,43 +32,45 @@ class CustomersController < ApplicationController
   # POST /customers
   # POST /customers.json
   def create
-    @customer = Customer.new(customer_params)
-    if Customer.where(:phone_number => customer_params[:phone_number]).blank?
-      if @customer.save
-        session[:customer_id] = @customer.id
+    if params[:commit] == "Log in"
+      @login_customer = Customer.where(phone_number: params[:customer][:phone_number], password: params[:customer][:password])
+      if @login_customer.count == 1
+        session[:customer_id] = @login_customer.first.id
         redirect_to action: "index"
       else
-        render :new
+        flash[:invalid_customer] = "Invalid Phone Number or Password"
+        redirect_to action: "new"
       end
-    else
-      session[:customer_id] = Customer.find_by(phone_number: customer_params[:phone_number]).id
-      redirect_to action: "index"
+    elsif params[:commit] == "Sign up"
+      @customer = Customer.new(customer_params)
+      if Customer.where(:phone_number => customer_params[:phone_number]).blank?
+        if @customer.save
+          session[:customer_id] = @customer.id
+          redirect_to action: "index"
+        else
+          render :new
+        end
+      else
+        session[:customer_id] = Customer.find_by(phone_number: customer_params[:phone_number]).id
+        redirect_to action: "index"
+      end
     end
   end
 
   # PATCH/PUT /customers/1
   # PATCH/PUT /customers/1.json
   def update
-    respond_to do |format|
-      if @customer.update(customer_params)
-        format.html { redirect_to @customer, notice: 'Customer was successfully updated.' }
-        format.json { render :show, status: :ok, location: @customer }
-      else
-        format.html { render :edit }
-        format.json { render json: @customer.errors, status: :unprocessable_entity }
-      end
-    end
   end
 
   # DELETE /customers/1
   # DELETE /customers/1.json
   def destroy
-    @customer.destroy
-    respond_to do |format|
-      format.html { redirect_to customers_url, notice: 'Customer was successfully destroyed.' }
-      format.json { head :no_content }
-    end
+    #destroy session of customer
+    session[:customer_id] = nil
+    redirect_to root_path
   end
+
+
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -70,7 +80,4 @@ class CustomersController < ApplicationController
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
-    def customer_params
-      params.require(:customer).permit(:first_name, :last_name, :phone_number)
-    end
 end

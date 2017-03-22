@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170321104930) do
+ActiveRecord::Schema.define(version: 20170322072839) do
 
   create_table "admins", force: :cascade do |t|
     t.string   "email",                  default: "", null: false
@@ -34,10 +34,10 @@ ActiveRecord::Schema.define(version: 20170321104930) do
   create_table "bookings", force: :cascade do |t|
     t.integer  "customer_id"
     t.integer  "cleaner_id"
-    t.date     "date"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
     t.integer  "city_id"
+    t.datetime "datetime"
   end
 
   add_index "bookings", ["city_id"], name: "index_bookings_on_city_id"
@@ -85,6 +85,7 @@ ActiveRecord::Schema.define(version: 20170321104930) do
     t.string   "phone_number"
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
+    t.string   "password"
   end
 
 end

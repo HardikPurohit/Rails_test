@@ -1,6 +1,7 @@
 <%=link_to "Cleaners" ,cleaners_path%>
 <%=link_to "Customer", customers_path %>
 <%=link_to "City", cities_path%>
+<%= link_to "Log out", destroy_admin_session_path, method: :delete%>
 <div class="panel panel-default">
    <div class="panel-heading">All Booking</div>
    <div class="panel-body">
@@ -15,7 +16,7 @@
     <%@bookings.each do |booking|%>
       <tr>
         <td>
-          <%=booking.date%>
+          <%=booking.datetime%>
         </td>
         <td>
           <%=booking.customer.first_name + " " + booking.customer.last_name%>

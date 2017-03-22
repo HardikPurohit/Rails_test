@@ -1,5 +1,5 @@
+<%= link_to "Log out", customer_log_out_path%>
 <h1>New Booking</h1>
-
+<%=flash[:select_another_cleaner]%>
 <%= render 'form' %>
-
-<%= link_to 'Back', bookings_path %>
+<%= link_to 'Back',customers_path %>
