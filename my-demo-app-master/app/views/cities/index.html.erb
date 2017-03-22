@@ -1,5 +1,4 @@
-<%= link_to "Home", admins_path%>
-<%= link_to "Log out", destroy_admin_session_path, method: :delete%>
+<%= link_to 'New City', new_city_path, class: "btn btn-success new" %>
 <div class="panel panel-default">
   <div class="panel-heading">All Cities</div>
   <div class="panel-body">
@@ -29,4 +28,3 @@
     </table>
   </div>
 </div>
-<%= link_to 'New City', new_city_path %>

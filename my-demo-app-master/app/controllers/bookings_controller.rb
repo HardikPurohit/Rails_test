@@ -2,7 +2,7 @@ class BookingsController < ApplicationController
 
   def index
     if current_admin.nil?
-      @bookings = Booking.where(customer_id: session[:customer_id])
+      @bookings = Booking.includes(:city, :cleaner, :customer).where(customer_id: session[:customer_id])
     else
       redirect_to admins_path
     end
@@ -27,10 +27,12 @@ class BookingsController < ApplicationController
   end
 
   def create
-    @date_time = Time.new(params[:booking].values[0],params[:booking].values[1],params[:booking].values[2],params[:booking].values[3],params[:booking].values[4],params[:booking].values[5])
+    @date = params[:booking].values[0] + "/" + params[:booking].values[1] + "/" + params[:booking].values[2]
+    @time = params[:booking].values[3] + ":" + params[:booking].values[4]
+    @date_time = (@date + " " + @time).to_datetime
     @city_id = params[:city][:booking]
     @cleaner_id = params[:city][:cleaners]
-    @records = Booking.where(datetime: @date_time, cleaner_id: @cleaner_id)
+    @records = Booking.where(datetime: @date_time - 2.hours..@date_time + 2.hours, cleaner_id: @cleaner_id)
     if @records.count == 0
       @booking = Booking.new(cleaner_id: @cleaner_id,city_id: @city_id,customer_id: session[:customer_id],datetime: @date_time)
       if @booking.save

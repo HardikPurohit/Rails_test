@@ -1,22 +1,17 @@
 class CustomersController < ApplicationController
   before_action :set_customer, only: [:show, :edit, :update]
 
-  # GET /customers
-  # GET /customers.json
   def index
     if current_admin.nil?
-      @bookings = Booking.where(customer_id: session[:customer_id])
+      @bookings = Booking.includes(:city, :customer, :cleaner).where(customer_id: session[:customer_id])
     else
       @customers = Customer.all
     end
   end
 
-  # GET /customers/1
-  # GET /customers/1.json
   def show
   end
 
-  # GET /customers/new
   def new
     if current_admin.nil?
       @customer = Customer.new
@@ -25,12 +20,9 @@ class CustomersController < ApplicationController
     end
   end
 
-  # GET /customers/1/edit
   def edit
   end
 
-  # POST /customers
-  # POST /customers.json
   def create
     if params[:commit] == "Log in"
       @login_customer = Customer.where(phone_number: params[:customer][:phone_number], password: params[:customer][:password])
@@ -43,34 +35,24 @@ class CustomersController < ApplicationController
       end
     elsif params[:commit] == "Sign up"
       @customer = Customer.new(customer_params)
-      if Customer.where(:phone_number => customer_params[:phone_number]).blank?
-        if @customer.save
-          session[:customer_id] = @customer.id
-          redirect_to action: "index"
-        else
-          render :new
-        end
-      else
-        session[:customer_id] = Customer.find_by(phone_number: customer_params[:phone_number]).id
+      if @customer.save
+        session[:customer_id] = @customer.id
         redirect_to action: "index"
+      else
+        render :new
       end
     end
   end
 
-  # PATCH/PUT /customers/1
-  # PATCH/PUT /customers/1.json
+
   def update
   end
 
-  # DELETE /customers/1
-  # DELETE /customers/1.json
   def destroy
     #destroy session of customer
     session[:customer_id] = nil
-    redirect_to root_path
+    redirect_to new_customer_path
   end
-
-
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -78,6 +60,7 @@ class CustomersController < ApplicationController
       @customer = Customer.find(params[:id])
       @customer_booking = Booking.where(customer_id: params[:id]).includes(:cleaner,:city)
     end
-
-    # Never trust parameters from the scary internet, only allow the white list through.
+    def customer_params
+      params.require(:customer).permit(:first_name,:last_name,:phone_number,:password)
+    end
 end

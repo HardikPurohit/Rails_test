@@ -10,7 +10,9 @@
       </ul>
     </div>
   <% end %>
-<%=flash[:notice]%>
+ <p class="error_message">
+  <%=flash[:cleaner_notice]%>
+</p>
   <div class="field">
     <%= f.label :first_name %><br>
     <%= f.text_field :first_name %>

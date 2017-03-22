@@ -29,7 +29,7 @@ class CleanersController < ApplicationController
   def create
     @cleaner = Cleaner.new(cleaner_params)
     if params[:city_ids].nil?
-      flash[:notice] = "please select atleast one checkbox"
+      flash[:cleaner_notice] = "please select atleast one checkbox"
       redirect_to action: 'new'
     else
       if @cleaner.save
